@@ -1,0 +1,89 @@
+------------------------------------------------------------------------
+TENDER.GATE.OS REGULATORY DATASET AUDIT   as at 2026-09-07
+------------------------------------------------------------------------
+entries:      14
+releasable:   14
+blocked:      0
+warnings:     4
+------------------------------------------------------------------------
+
+RELEASABLE
+  PASS  threshold.below_threshold.central_government  =  135018
+  PASS  threshold.below_threshold.sub_central  =  207720
+  PASS  threshold.works  =  5193000
+  PASS  prequalification.construction.standard  =  Common Assessment Standard (CAS)
+  PASS  socialvalue.model.current  =  10
+  PASS  socialvalue.model.next  =  {"scopeThreshold":1000000,"weighting":[{"band":"1m_to_under_5m","minPercent":10},{"band":"5m_and_above","minPercent":20}],"outcomes":["Good Jobs","Skills"],"modelAwardCriteria":6}
+  PASS  carbon.crp.trigger  =  5000000
+  PASS  kpi.pa23.s52  =  {"threshold":5000000,"minimumKpis":3}
+  PASS  award.pa23.s19  =  satisfies requirements AND best satisfies award criteria
+  PASS  nhs.evergreen.level1  =  Level 1 at point of tender close
+  PASS  nhs.modernslavery.regs  =  mandatory risk assessment before advertising or award
+  PASS  payment.subcontract_terms  =  30
+  PASS  payment.supplier_standard  =  {"averageDaysAllInvoices":45,"percentWithin60Days":95,"percentWithin60DaysWithActionPlan":90}
+  PASS  bsa.higher_risk_building  =  {"heightMetres":18,"storeys":7,"heightStoreysOperator":"OR","minResidentialUnits":2,"unitsOperator":"AND"}
+
+WARNINGS
+  WARN  threshold.works
+        [NOT_VERIFIED] verificationStatus = needs_review
+  WARN  prequalification.construction.standard
+        [NOT_VERIFIED] verificationStatus = needs_review
+  WARN  prequalification.construction.standard
+        [SUPERSEDES_WITHDRAWN] Replaces 'PAS 91:2013+A1:2017', withdrawn 2023-04. All product copy referencing the old value must be purged.
+  WARN  socialvalue.model.next
+        [NOT_YET_IN_FORCE] Comes into force 2027-01-01.
+
+------------------------------------------------------------------------
+RESULT: PASS — all entries carry sufficient evidence.
+validate exit=0
+
+R1  Carbon Reduction Plan — PPN 006
+  PASS  [AUG-PACK-BUG] exactly £5,000,000/yr is OUT of scope (above, not >=)
+  PASS  £5,000,001/yr is in scope
+  PASS  value given ex-VAT returns UNKNOWN, not a guess
+  PASS  missing contractYears returns UNKNOWN (value is averaged over life)
+  PASS  local authority buyer is out of PPN 006 scope
+
+R2  Contract KPIs — PA23 s.52
+  PASS  [AUG-PACK-BUG] exactly £5,000,000 total is OUT of scope (more than)
+  PASS  £5,000,001 total is in scope
+  PASS  [AUG-PACK-BUG] duty holder is the contracting authority, not the supplier
+  PASS  [AUG-PACK-BUG] supplier has no action arising from s.52
+
+R3  Higher-risk building — BSA 2022 s.65
+  PASS  [AUG-PACK-BUG] 7 storeys at 17m IS a higher-risk building (height-only test misses it)
+  PASS  18m at 5 storeys qualifies via the height limb
+  PASS  [AUG-PACK-BUG] 20m and 8 storeys but only 1 residential unit does NOT qualify
+  PASS  17m at 6 storeys with 30 units does not qualify
+  PASS  missing residentialUnits returns UNKNOWN, never a pass
+  PASS  storeys known but height unknown still resolves via the storey limb
+
+R4  Social value model — PPN 002 vs PPN 026
+  PASS  [AUG-PACK-BUG] commenced 2026-12-31 stays on PPN 002 even though 'today' is later
+  PASS  commenced 2027-01-01 moves to PPN 026
+  PASS  PPN 026 at £8m requires 20%
+  PASS  PPN 026 at £2m requires 10%
+  PASS  PPN 026 at exactly £5m falls in the 20% band
+  PASS  £500k under PPN 026 is out of scope — the 2027 coverage gap
+  PASS  [AUG-PACK-BUG] no commencement date returns UNKNOWN, never date-based selection
+
+R5  NHS modern slavery — SI 2025/1212
+  PASS  applies to a £40,000 NHS contract
+  PASS  [AUG-PACK-BUG] no value threshold exists on this rule
+  PASS  duty holder is the buyer
+
+R6  Award outcome — PA23 s.19
+  PASS  failing the requirements is terminal under s.19(2)(a)
+  PASS  [AUG-PACK-BUG] abnormally low is AT_RISK, not a failure — s.19(4)-(5) right to explain
+  PASS  [AUG-PACK-BUG] abnormally low is remediable
+  PASS  compliant tender proceeds to assessment
+
+------------------------------------------------------------------------
+passed 29   failed 0
+------------------------------------------------------------------------
+rules exit=0
+
+------------------------------------------------------------------------
+passed 42   failed 0
+------------------------------------------------------------------------
+tokens exit=0

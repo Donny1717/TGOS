@@ -1,0 +1,21 @@
+{
+  "name": "tender-gate-os",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "validate:regulatory": "node tools/validate.mjs",
+    "test:rules": "node tools/rules.test.mjs",
+    "test:tokens": "node tools/tokens.test.mjs",
+    "test:rls": "supabase test db supabase/tests/rls-isolation.sql --local",
+    "test:m02": "supabase test db supabase/tests/tender-source-documents.sql --local",
+    "test:m03": "supabase test db supabase/tests/requirements-evidence.sql --local",
+    "test:integration": "tsx --test tests/integration/rls-isolation.test.ts"
+  },
+  "devDependencies": {
+    "tsx": "4.23.13"
+  }
+}

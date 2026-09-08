@@ -1,0 +1,357 @@
+{
+  "schemaVersion": "1.0.0",
+  "datasetName": "tender-gate-os-uk-procurement-regulatory-dataset",
+  "generatedAt": "2026-09-06",
+  "reviewPolicy": {
+    "maxAgeDaysBySensitivity": {
+      "high": 90,
+      "medium": 180,
+      "low": 365
+    },
+    "note": "high = value changes on a fixed cycle or has a known future change date. medium = policy that can be superseded by a new PPN. low = primary legislation section reference."
+  },
+  "entries": [
+    {
+      "id": "threshold.below_threshold.central_government",
+      "label": "Regulated below-threshold contract limit, central government",
+      "value": 135018,
+      "unit": "GBP",
+      "vatBasis": "inclusive",
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "supersedes": {
+        "value": 138760,
+        "effectiveFrom": "2024-01-01"
+      },
+      "legalBasis": "Procurement Act 2023 s.85(3)(a), as amended by SI 2025/1200 reg.2(2)(a)",
+      "sources": [
+        "https://www.legislation.gov.uk/uksi/2025/1200/made",
+        "https://assets.publishing.service.gov.uk/media/6929c25eb3b9afff34e96238/2025-11-14_PPN_023_2026_Threshold_amounts.pdf"
+      ],
+      "sourceType": "primary",
+      "verificationStatus": "verified",
+      "lastVerified": "2026-09-06",
+      "sensitivity": "high",
+      "nextExpectedChange": "2028-01-01",
+      "changeTrigger": "WTO GPA biennial revision; next SI expected Nov 2027",
+      "notes": "Thresholds are inclusive of VAT. Contract value estimated per PA23 Schedule 3."
+    },
+    {
+      "id": "threshold.below_threshold.sub_central",
+      "label": "Regulated below-threshold contract limit, sub-central authority",
+      "value": 207720,
+      "unit": "GBP",
+      "vatBasis": "inclusive",
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "supersedes": {
+        "value": 213477,
+        "effectiveFrom": "2024-01-01"
+      },
+      "legalBasis": "Procurement Act 2023 s.85(3)(b), as amended by SI 2025/1200 reg.2(2)(b)",
+      "sources": [
+        "https://www.legislation.gov.uk/uksi/2025/1200/made"
+      ],
+      "sourceType": "primary",
+      "verificationStatus": "verified",
+      "lastVerified": "2026-09-06",
+      "sensitivity": "high",
+      "nextExpectedChange": "2028-01-01",
+      "changeTrigger": "WTO GPA biennial revision",
+      "notes": "Inclusive of VAT."
+    },
+    {
+      "id": "threshold.works",
+      "label": "Works contract threshold (not utilities/defence/light touch)",
+      "value": 5193000,
+      "unit": "GBP",
+      "vatBasis": "inclusive",
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "supersedes": {
+        "value": 5372609,
+        "effectiveFrom": "2024-01-01"
+      },
+      "legalBasis": "Procurement Act 2023 Schedule 1, as amended by SI 2025/1200",
+      "sources": [
+        "https://assets.publishing.service.gov.uk/media/6929c25eb3b9afff34e96238/2025-11-14_PPN_023_2026_Threshold_amounts.pdf"
+      ],
+      "sourceType": "primary",
+      "verificationStatus": "needs_review",
+      "lastVerified": "2026-09-06",
+      "sensitivity": "high",
+      "nextExpectedChange": "2028-01-01",
+      "changeTrigger": "WTO GPA biennial revision",
+      "notes": "Figure taken from secondary reporting of PPN 023 Annex A. MUST be confirmed line-by-line against the PPN 023 PDF Annex A before production use."
+    },
+    {
+      "id": "prequalification.construction.standard",
+      "label": "Construction pre-qualification standard for public sector",
+      "value": "Common Assessment Standard (CAS)",
+      "unit": "standard",
+      "effectiveFrom": "2024-03-01",
+      "effectiveTo": null,
+      "supersedes": {
+        "value": "PAS 91:2013+A1:2017",
+        "withdrawn": "2023-04"
+      },
+      "legalBasis": "PPN 03/24 (recommendation, not statutory). PAS 91 withdrawn by BSI April 2023.",
+      "sources": [
+        "https://www.gov.uk/government/collections/procurement-policy-notes",
+        "https://www.constructionline.co.uk/about/pas-91/"
+      ],
+      "sourceType": "mixed",
+      "verificationStatus": "needs_review",
+      "lastVerified": "2026-09-06",
+      "sensitivity": "high",
+      "nextExpectedChange": null,
+      "changeTrigger": "Build UK / CLC revision of CAS content",
+      "notes": "PAS 91 WITHDRAWN by BSI April 2023 - confirmed across multiple independent sources. Purge every PAS 91 reference from all product copy and templates. TWO UNRESOLVED ISSUES: (1) PPN 03/24 is titled 'Standard Selection Questionnaire (SQ)' and was issued March 2024 under the PCR 2015 regime; PA23 replaced the SQ with the Procurement Specific Questionnaire (PSQ) from 24 Feb 2025, so PPN 03/24 may itself be superseded - the gov.uk PPN page has not been read directly. (2) The GBP 5.337m figure quoted everywhere for CAS is the pre-2026 works threshold; the works threshold became GBP 5,193,000 on 1 Jan 2026, so repeating 5.337m is now stale. CAS Version 5 (1 July 2025) made the Building Safety section mandatory."
+    },
+    {
+      "id": "socialvalue.model.current",
+      "label": "Social Value Model minimum award weighting (PPN 002)",
+      "value": 10,
+      "unit": "percent",
+      "effectiveFrom": "2025-10-01",
+      "effectiveTo": null,
+      "supersedes": {
+        "value": "PPN 06/20"
+      },
+      "legalBasis": "PPN 002 Taking account of social value in the award of central government contracts, para 10. Published 8 Feb 2025.",
+      "sources": [
+        "https://assets.publishing.service.gov.uk/media/67b4bf7b3e77ca8b737d385b/2025-02-08_PPN_002_Taking_account_of_social_value_in__the_award_of_central_government_contracts.docx__1.pdf",
+        "https://www.procurementpathway.civilservice.gov.uk/documents/ppn/ppn-002-taking-account-of-social-value-in-the-award-of-central-government-contracts/evaluation-stage"
+      ],
+      "sourceType": "primary",
+      "verificationStatus": "verified",
+      "lastVerified": "2026-09-06",
+      "sensitivity": "medium",
+      "nextExpectedChange": "2027-01-01",
+      "changeTrigger": "PPN 026 becomes mandatory",
+      "notes": "VERIFIED WORDING: 'must apply a minimum 10% weighting (or an equivalent measurement) of the total score, for social value. Where absolute methodologies are used (for example Price per Quality Point (PQP) or Value for Money index) this will be 10% of the NON-PRICE criteria.' Project pack said 'quality' for the PQP limb - the PPN says non-price criteria. Supersedes PPN 06/20."
+    },
+    {
+      "id": "socialvalue.model.next",
+      "label": "Social Value Model from 2027 (PPN 026)",
+      "value": {
+        "scopeThreshold": 1000000,
+        "weighting": [
+          {
+            "band": "1m_to_under_5m",
+            "minPercent": 10
+          },
+          {
+            "band": "5m_and_above",
+            "minPercent": 20
+          }
+        ],
+        "outcomes": [
+          "Good Jobs",
+          "Skills"
+        ],
+        "modelAwardCriteria": 6
+      },
+      "unit": "composite",
+      "effectiveFrom": "2027-01-01",
+      "effectiveTo": null,
+      "legalBasis": "PPN 026: The Social Value Model, Cabinet Office, published 5 August 2026.",
+      "sources": [
+        "https://www.gov.uk/government/publications/ppn-026-the-social-value-model/ppn-026-the-social-value-model-html"
+      ],
+      "sourceType": "primary",
+      "verificationStatus": "verified",
+      "lastVerified": "2026-09-06",
+      "sensitivity": "high",
+      "nextExpectedChange": "2026-11-30",
+      "changeTrigger": "Cabinet Office practitioner guidance and sub-criteria due autumn 2026 - dataset must be revisited when published",
+      "notes": "PROJECT PACK WAS CORRECT ON THIS ENTRY. Verified: central gov depts, executive agencies, NDPBs only; local government and NHS may adopt but are not required to. Applies to procurements COMMENCED on or after 1 Jan 2027, commencement = publication of tender notice. Transition: procurements started before that date may continue on PPN 002, so BOTH MODELS RUN CONCURRENTLY - TENDER.GATE.OS must select the model from the tender documents, never by date alone. Percentages apply to the non-price score where PQP or similar absolute methodology is used. NOTE THE COVERAGE GAP: PPN 002 applied from the ordinary procurement threshold; PPN 026 applies only from GBP 1m, so contracts between the threshold and GBP 1m carry no mandated social value from 2027.",
+      "vatBasis": "inclusive",
+      "publishedOn": "2026-08-05",
+      "supersedes": {
+        "value": "PPN 002"
+      }
+    },
+    {
+      "id": "carbon.crp.trigger",
+      "label": "Carbon Reduction Plan condition of participation trigger (PPN 006)",
+      "value": 5000000,
+      "unit": "GBP_per_annum",
+      "effectiveFrom": "2025-02-24",
+      "effectiveTo": null,
+      "legalBasis": "PPN 006 (formerly PPN 06/21). Applies to procurements commenced on or after 24 Feb 2025 under PA23.",
+      "sources": [
+        "https://www.procurementpathway.civilservice.gov.uk/documents/ppn/ppn-006-taking-account-of-carbon-reduction-plans-in-the-procurement-of-major-government-contracts"
+      ],
+      "sourceType": "primary",
+      "verificationStatus": "verified",
+      "lastVerified": "2026-09-06",
+      "sensitivity": "medium",
+      "nextExpectedChange": null,
+      "changeTrigger": null,
+      "notes": "VERIFIED WORDING: 'estimated contract value ABOVE GBP 5 million per annum (including VAT based on the advertised contract value, averaged over the life of the contract)'. COMPARATOR IS STRICTLY GREATER-THAN. Project pack used '>= 5m' which fires incorrectly at exactly 5,000,000. Scope: central gov depts, executive agencies, NDPBs; not special regime contracts. Frameworks/dynamic markets only where individual call-off value > 5m pa. Subject to 'related and proportionate' carve-out, so it is NOT an unconditional gate. NHS applies CRP more widely regardless of value - separate rule needed.",
+      "vatBasis": "inclusive",
+      "comparator": "greater_than"
+    },
+    {
+      "id": "kpi.pa23.s52",
+      "label": "Contract KPI obligation on contracting authority (PA23 s.52)",
+      "value": {
+        "threshold": 5000000,
+        "minimumKpis": 3
+      },
+      "unit": "composite",
+      "effectiveFrom": "2025-02-24",
+      "effectiveTo": null,
+      "legalBasis": "Procurement Act 2023 s.52(1). In force 24 Feb 2025 by SI 2024/716.",
+      "sources": [
+        "https://www.legislation.gov.uk/ukpga/2023/54/section/52/enacted"
+      ],
+      "sourceType": "primary",
+      "verificationStatus": "verified",
+      "lastVerified": "2026-09-06",
+      "sensitivity": "low",
+      "nextExpectedChange": null,
+      "changeTrigger": null,
+      "notes": "VERIFIED WORDING: 'Before entering into a public contract with an estimated value of MORE THAN GBP 5 million, a contracting authority must set at least three key performance indicators.' Strictly greater-than. IMPORTANT SCOPE ERROR IN PACK: this is a duty on the CONTRACTING AUTHORITY, not on the supplier. TENDER.GATE.OS must not present it as a supplier obligation. Disapplied by s.52(2) where performance cannot appropriately be assessed by KPIs. Value estimated per Sch.3, VAT-inclusive. s.52(5) allows the threshold to be changed by regulations - a live change vector.",
+      "vatBasis": "inclusive",
+      "comparator": "more_than"
+    },
+    {
+      "id": "award.pa23.s19",
+      "label": "Most advantageous tender test (PA23 s.19)",
+      "value": "satisfies requirements AND best satisfies award criteria",
+      "unit": "section_reference",
+      "effectiveFrom": "2025-02-24",
+      "effectiveTo": null,
+      "legalBasis": "Procurement Act 2023 s.19(1)-(2). In force 24 Feb 2025 by SI 2024/716.",
+      "sources": [
+        "https://www.legislation.gov.uk/ukpga/2023/54/section/19/enacted?view=plain",
+        "https://legislation.gov.uk/ukpga/2023/54/part/3/chapter/2"
+      ],
+      "sourceType": "primary",
+      "verificationStatus": "verified",
+      "lastVerified": "2026-09-06",
+      "sensitivity": "low",
+      "nextExpectedChange": null,
+      "changeTrigger": null,
+      "notes": "VERIFIED: MAT = tender the authority considers (a) satisfies the authority's requirements, and (b) best satisfies the award criteria. s.19(7): 'requirements' means those described in the tender notice or associated tender documents. Separate disregard powers in s.19(3) cover conditions of participation, abnormally low price (with s.19(4)-(5) right to explain), and procedural breaches. TENDER.GATE.OS should model DISREGARD as distinct from FAILS-REQUIREMENTS - they are different mechanisms with different consequences."
+    },
+    {
+      "id": "nhs.evergreen.level1",
+      "label": "NHS Evergreen Level 1 tender eligibility",
+      "value": "Level 1 at point of tender close",
+      "unit": "standard",
+      "effectiveFrom": "2026-04-06",
+      "effectiveTo": null,
+      "legalBasis": "NHS Supply Chain tender requirement; Evergreen Sustainable Supplier Assessment (NHS England).",
+      "sources": [
+        "https://www.england.nhs.uk/nhs-commercial/sustainability/evergreen/",
+        "https://www.supplychain.nhs.uk/news-article/evergreen-sustainable-supplier-assessment-what-suppliers-need-to-know-for-april-2026/"
+      ],
+      "sourceType": "primary",
+      "verificationStatus": "verified",
+      "lastVerified": "2026-09-06",
+      "sensitivity": "high",
+      "nextExpectedChange": "2027-04-01",
+      "changeTrigger": "NHS Net Zero Supplier Roadmap update published 9 June 2026 introduces new rules from 1 April 2027",
+      "notes": "SCOPE NARROWER THAN PACK STATES. Applies to NHS SUPPLY CHAIN tenders, not all NHS procurement. Eligibility gate at tender close - NOT scored or weighted. Level 1 includes holding a PPN 006-compliant CRP but does NOT replace the other Five Supplier Asks. Score valid 12 months, annual refresh. Maturity criteria matrix itself was updated April 2026."
+    },
+    {
+      "id": "nhs.modernslavery.regs",
+      "label": "NHS modern slavery risk assessment duty",
+      "value": "mandatory risk assessment before advertising or award",
+      "unit": "policy",
+      "effectiveFrom": "2026-05-17",
+      "effectiveTo": null,
+      "legalBasis": "National Health Service (Procurement, Slavery and Human Trafficking) Regulations 2025 (SI 2025/1212), made 17 Nov 2025, in force 17 May 2026. Enabled by s.12ZC NHS Act 2006 via s.81 Health and Care Act 2022. Aligned to PPN 009.",
+      "sources": [
+        "https://www.england.nhs.uk/long-read/tackling-modern-slavery-in-nhs-procurement/",
+        "https://www.england.nhs.uk/safeguarding/slavery-human-trafficking-statement/",
+        "https://assets.publishing.service.gov.uk/media/67fe34f9ed87b816085466c6/2025-04-11_PPN_009_Tackling_Modern_Slavery_in_Supply_Chains_.pdf"
+      ],
+      "sourceType": "primary",
+      "verificationStatus": "verified",
+      "lastVerified": "2026-09-06",
+      "sensitivity": "high",
+      "nextExpectedChange": null,
+      "changeTrigger": null,
+      "notes": "DUTY SITS ON THE BUYER, NOT THE SUPPLIER - same scope error risk as PA23 s.52. Applies to public bodies procuring goods or services for the health service in England, including central purchasing bodies and local authorities, not only NHS trusts. APPLIES REGARDLESS OF CONTRACT VALUE - there is no financial threshold, so TENDER.GATE.OS must not gate this rule on value. Covers the full commercial lifecycle: pre-advertisement, award, and contract term. Separately, Sch.6 PA23 makes modern slavery offences a MANDATORY EXCLUSION ground - that is a distinct rule and must be modelled separately."
+    },
+    {
+      "id": "payment.subcontract_terms",
+      "label": "Implied payment terms in public sub-contracts",
+      "value": 30,
+      "unit": "days",
+      "effectiveFrom": "2025-02-24",
+      "effectiveTo": null,
+      "legalBasis": "Procurement Act 2023 s.73(1) - implies 30-day payment terms into every public sub-contract. Enforcement guidance: PPN 021 (April 2025).",
+      "sources": [
+        "https://gov.uk/government/publications/ppn-021-payment-spot-checks-in-public-sub-contracts/ppn-021-payment-spot-checks-in-public-sub-contracts-html"
+      ],
+      "sourceType": "primary",
+      "verificationStatus": "verified",
+      "lastVerified": "2026-09-06",
+      "sensitivity": "medium",
+      "nextExpectedChange": null,
+      "changeTrigger": null,
+      "notes": "CORRECTION. TENDER.GATE.OS marketing copy claims 'PPN 003 30-day payment obligations'. There is no PPN 003 governing this. The 30-day term is STATUTORY under PA23 s.73(1) for sub-contracts, not a PPN. PPN 021 covers spot checks on sub-contracts over GBP 5m pa inc VAT. Remove PPN 003 from all copy."
+    },
+    {
+      "id": "payment.supplier_standard",
+      "label": "Supplier payment performance standard, condition of participation (PPN 018)",
+      "value": {
+        "averageDaysAllInvoices": 45,
+        "percentWithin60Days": 95,
+        "percentWithin60DaysWithActionPlan": 90
+      },
+      "unit": "composite",
+      "contractTrigger": {
+        "value": 5000000,
+        "unit": "GBP_per_annum",
+        "vatBasis": "inclusive",
+        "comparator": "greater_than"
+      },
+      "effectiveFrom": "2025-10-01",
+      "supersedes": {
+        "value": "PPN 015 / PPN 10/23 / PPN 08/21"
+      },
+      "legalBasis": "PPN 018 Taking account of a supplier's approach to payment in the procurement of major contracts, para 9-10.",
+      "sources": [
+        "https://www.gov.uk/government/publications/ppn-018-how-to-take-account-of-a-suppliers-approach-to-payment-in-the-procurement-of-major-contracts/ppn-018-taking-account-of-a-suppliers-approach-to-payment-in-the-procurement-of-major-contracts-html"
+      ],
+      "sourceType": "primary",
+      "verificationStatus": "verified",
+      "lastVerified": "2026-09-06",
+      "sensitivity": "medium",
+      "nextExpectedChange": null,
+      "changeTrigger": "Government has signalled further tightening of average payment days",
+      "notes": "This is the rule TENDER.GATE.OS copy was reaching for. Applies to procurements ADVERTISED on or after 1 Oct 2025. Measured over 12 months, must be met in at least one of the two previous six-month reporting periods. Assessed via Procurement Specific Questionnaire (PSQ)."
+    },
+    {
+      "id": "bsa.higher_risk_building",
+      "label": "Higher-risk building definition (in-occupation)",
+      "value": {
+        "heightMetres": 18,
+        "storeys": 7,
+        "heightStoreysOperator": "OR",
+        "minResidentialUnits": 2,
+        "unitsOperator": "AND"
+      },
+      "unit": "composite",
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "legalBasis": "Building Safety Act 2022 s.65 + Higher-Risk Buildings (Descriptions and Supplementary Provisions) Regulations 2023",
+      "sources": [
+        "https://www.gov.uk/guidance/criteria-for-being-a-higher-risk-building-during-the-occupation-phase-of-the-new-higher-risk-regime"
+      ],
+      "sourceType": "primary",
+      "verificationStatus": "verified",
+      "lastVerified": "2026-09-06",
+      "sensitivity": "medium",
+      "nextExpectedChange": null,
+      "changeTrigger": null,
+      "notes": "CORRECTION. TENDER.GATE.OS copy uses '18m threshold' alone. The test is 'at least 18 metres in height OR at least 7 storeys' AND 'at least 2 residential units'. A 7-storey building under 18m still qualifies - the current copy produces a FALSE NEGATIVE. Design/construction phase differs: also captures care homes and hospitals at least 18m. Height measured to top floor surface; roof-top plant storeys ignored. Roof gardens under active MHCLG review since 17 Dec 2025 - unsettled."
+    }
+  ]
+}

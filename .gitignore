@@ -1,0 +1,16 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Next.js
+apps/web/.next/
+apps/web/out/
+
+# Dependencies
+node_modules/
+apps/web/node_modules/
+
+# Supabase local runtime
+supabase/.temp/
+supabase/.branches/
