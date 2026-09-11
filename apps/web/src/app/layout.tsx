@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TENDER.GATE.OS",
-  description: "UK public-sector tender compliance workspace",
+  title: "Doccute | Document intelligence",
+  description: "A trusted product hub for document verification, control and UK public procurement knowledge.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

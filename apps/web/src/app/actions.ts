@@ -79,6 +79,14 @@ const evidenceSchema = z.object({
   title: z.string().trim().min(2).max(200),
 });
 
+const tenderStatusSchema = z.enum(["draft", "bid_decision", "active", "submitted", "awarded", "lost", "archived"]);
+const taskStatusSchema = z.enum(["open", "in_progress", "blocked", "done"]);
+const requirementStatusSchema = z.enum(["open", "in_progress", "satisfied", "at_risk", "waived"]);
+const evidenceLinkSchema = z.object({
+  evidenceItemId: z.string().uuid(),
+  requirementId: z.string().uuid(),
+});
+
 const maxSourceDocumentBytes = 25 * 1024 * 1024;
 
 function readField(formData: FormData, field: string) {
@@ -166,6 +174,12 @@ async function writeAuditEvent(organisationId: string, actorId: string, eventTyp
 
 function safeStorageFilename(name: string) {
   return name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 120) || "source-document";
+}
+
+export async function signOut() {
+  const supabase = await createSupabaseServerClient();
+  await supabase.auth.signOut();
+  redirect("/sign-in");
 }
 
 export async function requestSignInLink(formData: FormData) {
@@ -441,6 +455,98 @@ export async function createEvidence(tenderId: string, organisationId: string, f
   if (error) throw new Error("The evidence item could not be created.");
 
   await writeAuditEvent(organisationId, user.id, "evidence_created");
+  revalidatePath(`/dashboard/${organisationId}/tenders/${tenderId}`);
+}
+
+export async function updateTenderStatus(tenderId: string, organisationId: string, formData: FormData) {
+  const status = tenderStatusSchema.parse(readField(formData, "status"));
+  const { supabase, user } = await requireOrganisationMembership(organisationId, ["owner", "admin"]);
+  const { error } = await supabase
+    .from("tenders")
+    .update({ status })
+    .eq("id", tenderId)
+    .eq("organisation_id", organisationId);
+
+  if (error) throw new Error("The tender status could not be updated.");
+
+  await writeAuditEvent(organisationId, user.id, `tender_status_changed_${status}`);
+  revalidatePath(`/dashboard/${organisationId}`);
+  revalidatePath(`/dashboard/${organisationId}/tenders`);
+  revalidatePath(`/dashboard/${organisationId}/tenders/${tenderId}`);
+}
+
+export async function updateTenderTaskStatus(tenderId: string, organisationId: string, formData: FormData) {
+  const taskId = z.string().uuid().parse(readField(formData, "taskId"));
+  const status = taskStatusSchema.parse(readField(formData, "status"));
+  const { supabase, user } = await requireOrganisationMembership(organisationId, ["owner", "admin", "member"]);
+  const { error } = await supabase
+    .from("tender_tasks")
+    .update({ status })
+    .eq("id", taskId)
+    .eq("tender_id", tenderId)
+    .eq("organisation_id", organisationId);
+
+  if (error) throw new Error("The tender task status could not be updated.");
+
+  await writeAuditEvent(organisationId, user.id, `tender_task_status_changed_${status}`);
+  revalidatePath(`/dashboard/${organisationId}/tenders/${tenderId}`);
+}
+
+export async function updateRequirementStatus(tenderId: string, organisationId: string, formData: FormData) {
+  const requirementId = z.string().uuid().parse(readField(formData, "requirementId"));
+  const status = requirementStatusSchema.parse(readField(formData, "status"));
+  const { supabase, user } = await requireOrganisationMembership(organisationId, ["owner", "admin", "member"]);
+  const { error } = await supabase
+    .from("requirements")
+    .update({ status })
+    .eq("id", requirementId)
+    .eq("tender_id", tenderId)
+    .eq("organisation_id", organisationId);
+
+  if (error) throw new Error("The requirement status could not be updated.");
+
+  await writeAuditEvent(organisationId, user.id, `requirement_status_changed_${status}`);
+  revalidatePath(`/dashboard/${organisationId}/tenders/${tenderId}`);
+}
+
+export async function linkRequirementEvidence(tenderId: string, organisationId: string, formData: FormData) {
+  const input = evidenceLinkSchema.parse({
+    evidenceItemId: readField(formData, "evidenceItemId"),
+    requirementId: readField(formData, "requirementId"),
+  });
+  const { supabase, user } = await requireOrganisationMembership(organisationId, ["owner", "admin", "member"]);
+  const { error } = await supabase.from("requirement_evidence_links").insert({
+    created_by: user.id,
+    evidence_item_id: input.evidenceItemId,
+    organisation_id: organisationId,
+    requirement_id: input.requirementId,
+  });
+
+  if (error) {
+    if (error.code === "23505") throw new Error("This evidence is already linked to the requirement.");
+    throw new Error("The evidence could not be linked to the requirement.");
+  }
+
+  await writeAuditEvent(organisationId, user.id, "requirement_evidence_linked");
+  revalidatePath(`/dashboard/${organisationId}/tenders/${tenderId}`);
+}
+
+export async function unlinkRequirementEvidence(tenderId: string, organisationId: string, formData: FormData) {
+  const input = evidenceLinkSchema.parse({
+    evidenceItemId: readField(formData, "evidenceItemId"),
+    requirementId: readField(formData, "requirementId"),
+  });
+  const { supabase, user } = await requireOrganisationMembership(organisationId, ["owner", "admin", "member"]);
+  const { error } = await supabase
+    .from("requirement_evidence_links")
+    .delete()
+    .eq("requirement_id", input.requirementId)
+    .eq("evidence_item_id", input.evidenceItemId)
+    .eq("organisation_id", organisationId);
+
+  if (error) throw new Error("The evidence could not be unlinked from the requirement.");
+
+  await writeAuditEvent(organisationId, user.id, "requirement_evidence_unlinked");
   revalidatePath(`/dashboard/${organisationId}/tenders/${tenderId}`);
 }
 

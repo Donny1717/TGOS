@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { deleteCompanyPassport, saveCompanyPassport } from "@/app/actions";
 import { requireOrganisationMembership } from "@/lib/auth";
+import { isLocalAuthBypassEnabled } from "@/lib/dev-auth";
 
 type PassportPageProps = {
   params: Promise<{ organisationId: string }>;
@@ -25,6 +26,20 @@ function moneyToInput(value: unknown) {
 
 export default async function CompanyPassportPage({ params }: PassportPageProps) {
   const { organisationId } = await params;
+  if (isLocalAuthBypassEnabled() && organisationId === "demo") {
+    return (
+      <section className="space-y-6">
+        <div><Link href="/dashboard/demo" className="text-sm font-medium text-cyan-700 hover:text-cyan-900">← Northstar Infrastructure</Link><h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900">Company Passport</h1><p className="mt-2 text-sm text-slate-500">Controlled company information reused across tender workspaces.</p></div>
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-cyan-200 bg-cyan-50 p-5"><div><p className="text-sm font-semibold text-slate-900">Passport verified</p><p className="mt-1 text-xs text-slate-600">Last reviewed 4 September 2026 · Preview data only</p></div><span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">Complete</span></div>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"><h2 className="text-lg font-semibold text-slate-900">Legal identity</h2><dl className="mt-4 space-y-3 text-sm"><div className="flex justify-between gap-4"><dt className="text-slate-500">Legal name</dt><dd className="font-medium text-slate-800">Northstar Infrastructure Ltd</dd></div><div className="flex justify-between gap-4"><dt className="text-slate-500">Company number</dt><dd className="font-medium text-slate-800">08745192</dd></div><div className="flex justify-between gap-4"><dt className="text-slate-500">VAT number</dt><dd className="font-medium text-slate-800">GB 214 8876 31</dd></div><div className="flex justify-between gap-4"><dt className="text-slate-500">Registered office</dt><dd className="text-right font-medium text-slate-800">18 Meridian Way<br />Birmingham B1 2JP</dd></div></dl></section>
+          <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"><h2 className="text-lg font-semibold text-slate-900">Financial profile</h2><dl className="mt-4 space-y-3 text-sm"><div className="flex justify-between gap-4"><dt className="text-slate-500">Financial year end</dt><dd className="font-medium text-slate-800">31 March</dd></div><div className="flex justify-between gap-4"><dt className="text-slate-500">Annual turnover</dt><dd className="font-medium text-slate-800">£8.4m</dd></div><div className="flex justify-between gap-4"><dt className="text-slate-500">Net assets</dt><dd className="font-medium text-slate-800">£2.1m</dd></div></dl></section>
+          <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"><h2 className="text-lg font-semibold text-slate-900">Policies and certifications</h2><div className="mt-4 flex flex-wrap gap-2">{["ISO 9001", "ISO 27001", "Cyber Essentials Plus", "Modern Slavery Policy", "Health & Safety"].map((item) => <span key={item} className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700">{item}</span>)}</div></section>
+          <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"><h2 className="text-lg font-semibold text-slate-900">Primary contact</h2><p className="mt-4 text-sm font-medium text-slate-800">Sam Khan · Head of Bids</p><p className="mt-1 text-sm text-slate-500">sam.khan@northstar.example · 0121 555 0148</p></section>
+        </div>
+      </section>
+    );
+  }
   const { membership, supabase } = await requireOrganisationMembership(organisationId);
   const [{ data: organisation }, { data: passport }] = await Promise.all([
     supabase.from("organisations").select("name").eq("id", organisationId).single(),

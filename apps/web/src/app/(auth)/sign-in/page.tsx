@@ -1,10 +1,16 @@
 import { requestSignInLink } from "@/app/actions";
+import { isLocalAuthBypassEnabled } from "@/lib/dev-auth";
+import { redirect } from "next/navigation";
 
 type SignInPageProps = {
   searchParams: Promise<{ error?: string; sent?: string }>;
 };
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
+  if (isLocalAuthBypassEnabled()) {
+    redirect("/dashboard");
+  }
+
   const { error, sent } = await searchParams;
 
   return (
