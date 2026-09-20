@@ -8,59 +8,187 @@ type DashboardPageProps = {
 
 export default async function OrganisationDashboardPage({ params }: DashboardPageProps) {
   const { organisationId } = await params;
+
   if (isLocalAuthBypassEnabled() && organisationId === "demo") {
     return (
-      <section className="mx-auto max-w-6xl space-y-8">
-        <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-700">Monday, 8 September 2026</p><h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">Good morning, Northstar.</h1><p className="mt-2 text-sm text-slate-500">Here’s the health of your tender pipeline.</p></div><Link href={`/dashboard/${organisationId}/tenders`} className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800">+ New tender</Link></div>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{[["08", "Active tenders", "↑ 2 this month", "text-slate-900"], ["94%", "Evidence coverage", "↑ 8% this month", "text-cyan-700"], ["03", "Needs review", "2 due this week", "text-amber-600"], ["12", "Team activity", "↑ 18% this week", "text-emerald-700"]].map(([value, label, detail, color]) => <div key={label} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"><p className={`text-3xl font-semibold ${color}`}>{value}</p><p className="mt-2 text-sm font-medium text-slate-700">{label}</p><p className="mt-1 text-xs text-slate-400">{detail}</p></div>)}</div>
-        <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]"><div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"><div className="flex items-center justify-between"><div><h2 className="font-semibold text-slate-900">Tender health</h2><p className="mt-1 text-xs text-slate-500">Evidence coverage across active workspaces</p></div><Link href={`/dashboard/${organisationId}/tenders`} className="text-xs font-semibold text-cyan-700">View all →</Link></div><div className="mt-7 flex h-40 items-end gap-3 border-b border-slate-100 pb-0">{[48,60,55,73,68,78,88,83,94,90,96,94].map((height, i) => <div key={i} className="flex flex-1 flex-col items-center gap-2"><div className={`w-full rounded-t-md ${i > 8 ? "bg-cyan-500" : "bg-cyan-200"}`} style={{ height: `${height}%` }} /><span className="text-[10px] text-slate-400">{["Oct", "", "Dec", "", "Feb", "", "Apr", "", "Jun", "", "Aug", ""][i]}</span></div>)}</div></div>
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"><div className="flex items-center justify-between"><h2 className="font-semibold text-slate-900">Upcoming deadlines</h2><span className="text-xs text-slate-400">Next 14 days</span></div><div className="mt-5 space-y-4">{[["Civic Digital Services Framework", "12 Sep", "3 days"], ["Westshire FM Contract", "18 Sep", "9 days"], ["NHS Data Platform", "22 Sep", "13 days"]].map(([name, date, days]) => <div key={name} className="flex items-center gap-3"><span className="grid h-9 w-9 place-items-center rounded-lg bg-amber-50 text-xs font-bold text-amber-700">◷</span><div className="min-w-0 flex-1"><p className="truncate text-xs font-semibold text-slate-700">{name}</p><p className="mt-1 text-[11px] text-slate-400">{date}</p></div><span className="text-[11px] font-medium text-slate-400">{days}</span></div>)}</div></div></div>
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"><div className="flex items-center justify-between"><div><h2 className="font-semibold text-slate-900">Recent activity</h2><p className="mt-1 text-xs text-slate-500">A live view of your team’s workspace</p></div><span className="text-xs font-semibold text-slate-400">All activity →</span></div><div className="mt-5 grid gap-4 md:grid-cols-3">{[["JR", "Jamie reviewed 6 requirements", "Civic Digital Services · 24 min ago", "bg-violet-100 text-violet-700"], ["AM", "Alex added a source document", "Westshire FM Contract · 2 hrs ago", "bg-emerald-100 text-emerald-700"], ["SK", "Sam updated Company Passport", "Northstar Infrastructure · Yesterday", "bg-cyan-100 text-cyan-700"]].map(([initials, action, detail, color]) => <div key={action} className="flex gap-3 rounded-lg bg-slate-50 p-3"><span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-[10px] font-bold ${color}`}>{initials}</span><div><p className="text-xs font-semibold text-slate-700">{action}</p><p className="mt-1 text-[11px] text-slate-400">{detail}</p></div></div>)}</div></div>
+      <section className="space-y-8">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight text-[var(--tgos-navy)]">Good morning</h1>
+            <p className="mt-2 text-sm text-[var(--tgos-muted)]">You have 2 tenders requiring attention.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link href={`/dashboard/${organisationId}/tenders`} className="inline-flex min-h-11 items-center rounded-[10px] bg-[var(--tgos-primary)] px-4 text-sm font-semibold text-white">+ New tender</Link>
+            <Link href={`/dashboard/${organisationId}/tenders`} className="inline-flex min-h-11 items-center rounded-[10px] border border-[var(--tgos-border-strong)] bg-white px-4 text-sm font-semibold">Upload tender pack</Link>
+          </div>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            ["2", "Tenders requiring attention"],
+            ["3", "Critical issues"],
+            ["4", "Mandatory requirements at risk"],
+            ["30 Sep 2026", "Nearest submission deadline"],
+          ].map(([value, label]) => (
+            <div key={label} className="rounded-[10px] border border-[var(--tgos-border)] bg-white p-4">
+              <p className="text-sm text-[var(--tgos-subtle)]">{label}</p>
+              <p className="mt-2 text-2xl font-semibold text-[var(--tgos-navy)]">{value}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+          <section className="rounded-[10px] border border-[var(--tgos-border)] bg-white p-5">
+            <h2 className="text-lg font-semibold text-[var(--tgos-navy)]">Priority actions</h2>
+            <ul className="mt-4 divide-y divide-[var(--tgos-border)]">
+              <li className="flex items-start justify-between gap-3 py-3">
+                <div>
+                  <p className="font-medium">Blocked — Carbon Reduction Plan missing</p>
+                  <p className="text-xs text-[var(--tgos-subtle)]">Westshire FM Contract · Critical</p>
+                </div>
+                <span className="rounded-full bg-[var(--tgos-critical-bg)] px-2 py-1 text-xs font-bold text-[var(--tgos-critical)]">Critical</span>
+              </li>
+              <li className="flex items-start justify-between gap-3 py-3">
+                <div>
+                  <p className="font-medium">Blocked — Public Liability Insurance below £10m</p>
+                  <p className="text-xs text-[var(--tgos-subtle)]">£5m on file · Insurance.pdf p.2</p>
+                </div>
+                <span className="rounded-full bg-[var(--tgos-critical-bg)] px-2 py-1 text-xs font-bold text-[var(--tgos-critical)]">Critical</span>
+              </li>
+              <li className="flex items-start justify-between gap-3 py-3">
+                <div>
+                  <p className="font-medium">Needs attention — ISO 9001 expired</p>
+                  <p className="text-xs text-[var(--tgos-subtle)]">Replace certificate before final gate</p>
+                </div>
+                <span className="rounded-full bg-[var(--tgos-warning-bg)] px-2 py-1 text-xs font-bold text-[var(--tgos-warning)]">High</span>
+              </li>
+            </ul>
+          </section>
+
+          <div className="space-y-4">
+            <section className="rounded-[10px] border border-[var(--tgos-border)] bg-white p-5">
+              <h2 className="text-lg font-semibold text-[var(--tgos-navy)]">Active tenders</h2>
+              <ul className="mt-3 space-y-3 text-sm">
+                <li className="flex items-start justify-between gap-3">
+                  <div>
+                    <Link href={`/dashboard/${organisationId}/tenders/westshire-fm`} className="font-semibold text-[var(--tgos-primary)]">Westshire FM Contract</Link>
+                    <p className="text-xs text-[var(--tgos-subtle)]">Westshire County Council · 18 Sep 2026</p>
+                  </div>
+                  <span className="rounded-full bg-[var(--tgos-critical-bg)] px-2 py-1 text-xs font-bold text-[var(--tgos-critical)]">No-Go risk</span>
+                </li>
+                <li className="flex items-start justify-between gap-3">
+                  <div>
+                    <Link href={`/dashboard/${organisationId}/tenders/nhs-data-platform`} className="font-semibold text-[var(--tgos-primary)]">NHS Data Platform</Link>
+                    <p className="text-xs text-[var(--tgos-subtle)]">North Midlands NHS Trust · 22 Sep 2026</p>
+                  </div>
+                  <span className="rounded-full bg-[var(--tgos-warning-bg)] px-2 py-1 text-xs font-bold text-[var(--tgos-warning)]">Needs attention</span>
+                </li>
+              </ul>
+            </section>
+            <section className="rounded-[10px] border border-[var(--tgos-border)] bg-white p-5">
+              <h2 className="text-lg font-semibold text-[var(--tgos-navy)]">Evidence alerts</h2>
+              <ul className="mt-3 space-y-3 text-sm">
+                <li className="flex justify-between gap-3"><span>Public Liability Insurance</span><span className="rounded-full bg-[var(--tgos-warning-bg)] px-2 py-1 text-xs font-bold text-[var(--tgos-warning)]">Expiring soon</span></li>
+                <li className="flex justify-between gap-3"><span>Carbon Reduction Plan</span><span className="rounded-full bg-[var(--tgos-critical-bg)] px-2 py-1 text-xs font-bold text-[var(--tgos-critical)]">Missing</span></li>
+              </ul>
+            </section>
+          </div>
+        </div>
+
+        <section className="rounded-[10px] border border-[var(--tgos-border)] bg-white p-5">
+          <h2 className="text-lg font-semibold text-[var(--tgos-navy)]">Recent activity</h2>
+          <p className="mt-2 text-sm text-[var(--tgos-muted)]">Requirement extraction reviewed · Westshire FM · today</p>
+          <p className="mt-1 text-sm text-[var(--tgos-muted)]">Issue noted: CRP missing · today</p>
+        </section>
       </section>
     );
   }
 
   const { supabase } = await requireOrganisationMembership(organisationId);
-  const [{ data: organisation }, { data: passport }, { count: tenderCount }] = await Promise.all([
+  const [{ data: organisation }, { data: passport }, { data: tenders }, { count: requirementCount }, { count: evidenceCount }] = await Promise.all([
     supabase.from("organisations").select("id, name, slug").eq("id", organisationId).single(),
     supabase.from("company_passports").select("id, legal_name, updated_at").eq("organisation_id", organisationId).maybeSingle(),
-    supabase.from("tenders").select("id", { count: "exact", head: true }).eq("organisation_id", organisationId),
+    supabase
+      .from("tenders")
+      .select("id, title, buyer_name, status, submission_deadline")
+      .eq("organisation_id", organisationId)
+      .order("submission_deadline", { ascending: true, nullsFirst: false })
+      .limit(8),
+    supabase.from("requirements").select("id", { count: "exact", head: true }).eq("organisation_id", organisationId),
+    supabase.from("evidence_items").select("id", { count: "exact", head: true }).eq("organisation_id", organisationId),
   ]);
 
+  const openTenders = (tenders ?? []).filter((tender) => !["submitted", "awarded", "lost", "archived"].includes(tender.status));
+  const nearest = openTenders.find((tender) => tender.submission_deadline)?.submission_deadline;
+
   return (
-    <section className="space-y-6">
-      <div>
-        <p className="text-sm font-medium text-blue-700">Organisation dashboard</p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight">{organisation?.name}</h1>
-        <p className="mt-2 text-slate-600">
-          Build controlled evidence for bids. This platform assists compliance work and does not certify submissions.
-        </p>
+    <section className="space-y-8">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight text-[var(--tgos-navy)]">{organisation?.name}</h1>
+          <p className="mt-2 text-sm text-[var(--tgos-muted)]">
+            You have {openTenders.length} tender{openTenders.length === 1 ? "" : "s"} in progress. This platform assists compliance work and does not certify submissions.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Link href={`/dashboard/${organisationId}/tenders`} className="inline-flex min-h-11 items-center rounded-[10px] bg-[var(--tgos-primary)] px-4 text-sm font-semibold text-white">+ New tender</Link>
+          <Link href={`/dashboard/${organisationId}/tenders`} className="inline-flex min-h-11 items-center rounded-[10px] border border-[var(--tgos-border-strong)] bg-white px-4 text-sm font-semibold">Upload tender pack</Link>
+        </div>
       </div>
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold">Tender workspaces</h2>
-        <p className="mt-2 text-sm text-slate-600">
-          {tenderCount ?? 0} workspace{tenderCount === 1 ? "" : "s"} for this organisation.
-        </p>
-        <Link
-          href={`/dashboard/${organisationId}/tenders`}
-          className="mt-5 inline-flex rounded-md border border-blue-700 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50"
-        >
-          Open tender workspaces
-        </Link>
+
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-[10px] border border-[var(--tgos-border)] bg-white p-4">
+          <p className="text-sm text-[var(--tgos-subtle)]">Tenders requiring attention</p>
+          <p className="mt-2 text-2xl font-semibold text-[var(--tgos-navy)]">{openTenders.length}</p>
+        </div>
+        <div className="rounded-[10px] border border-[var(--tgos-border)] bg-white p-4">
+          <p className="text-sm text-[var(--tgos-subtle)]">Requirements on file</p>
+          <p className="mt-2 text-2xl font-semibold text-[var(--tgos-navy)]">{requirementCount ?? 0}</p>
+        </div>
+        <div className="rounded-[10px] border border-[var(--tgos-border)] bg-white p-4">
+          <p className="text-sm text-[var(--tgos-subtle)]">Evidence items</p>
+          <p className="mt-2 text-2xl font-semibold text-[var(--tgos-navy)]">{evidenceCount ?? 0}</p>
+        </div>
+        <div className="rounded-[10px] border border-[var(--tgos-border)] bg-white p-4">
+          <p className="text-sm text-[var(--tgos-subtle)]">Nearest submission deadline</p>
+          <p className="mt-2 text-lg font-semibold text-[var(--tgos-navy)]">
+            {nearest ? new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/London" }).format(new Date(nearest)) : "Not set"}
+          </p>
+        </div>
       </div>
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold">Company Passport</h2>
-        <p className="mt-2 text-sm text-slate-600">
-          {passport
-            ? `Last updated ${new Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(new Date(passport.updated_at))}.`
-            : "No Company Passport has been created yet."}
-        </p>
-        <Link
-          href={`/dashboard/${organisationId}/passport`}
-          className="mt-5 inline-flex rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800"
-        >
-          {passport ? "Manage Company Passport" : "Create Company Passport"}
-        </Link>
+
+      <div className="grid gap-4 xl:grid-cols-2">
+        <section className="rounded-[10px] border border-[var(--tgos-border)] bg-white p-5">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold text-[var(--tgos-navy)]">Active tenders</h2>
+            <Link href={`/dashboard/${organisationId}/tenders`} className="text-sm font-semibold text-[var(--tgos-primary)]">View all</Link>
+          </div>
+          <ul className="mt-4 divide-y divide-[var(--tgos-border)]">
+            {(tenders ?? []).map((tender) => (
+              <li key={tender.id} className="flex items-start justify-between gap-3 py-3">
+                <div>
+                  <Link href={`/dashboard/${organisationId}/tenders/${tender.id}`} className="font-semibold text-[var(--tgos-primary)]">{tender.title}</Link>
+                  <p className="text-xs text-[var(--tgos-subtle)]">{tender.buyer_name}</p>
+                </div>
+                <span className="rounded-full bg-[var(--tgos-surface-subtle)] px-2 py-1 text-xs font-semibold capitalize text-[var(--tgos-muted)]">{tender.status.replaceAll("_", " ")}</span>
+              </li>
+            ))}
+            {(tenders ?? []).length === 0 ? <li className="py-4 text-sm text-[var(--tgos-muted)]">No tenders yet. Create a tender workspace to begin.</li> : null}
+          </ul>
+        </section>
+
+        <section className="rounded-[10px] border border-[var(--tgos-border)] bg-white p-5">
+          <h2 className="text-lg font-semibold text-[var(--tgos-navy)]">Priority next steps</h2>
+          <ul className="mt-4 space-y-3 text-sm text-[var(--tgos-muted)]">
+            <li>1. Keep Company Passport current{passport ? ` (updated ${new Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(new Date(passport.updated_at))})` : " (not created yet)"}.</li>
+            <li>2. Upload the tender pack and add source-cited requirements.</li>
+            <li>3. Link evidence, then run Final Gate when Sprint 3 lands.</li>
+          </ul>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Link href={`/dashboard/${organisationId}/passport`} className="inline-flex min-h-11 items-center rounded-[10px] border border-[var(--tgos-border-strong)] px-4 text-sm font-semibold">Company Passport</Link>
+            <Link href={`/dashboard/${organisationId}/issues`} className="inline-flex min-h-11 items-center rounded-[10px] border border-[var(--tgos-border-strong)] px-4 text-sm font-semibold">Issues</Link>
+          </div>
+        </section>
       </div>
     </section>
   );

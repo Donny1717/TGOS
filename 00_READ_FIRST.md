@@ -2,7 +2,7 @@
 
 **Issued:** 7 September 2026
 **Replaces:** the DOCCUTE / DOCCOTE pack of 30 August 2026, in full
-**Company:** Honey-B2024 Ltd, London · **Repo folder:** `tender-gate-os`
+**Company:** Honey-B2024 Ltd, London · **Repo folder:** `TGOS` (local) · remote `Donny1717/TENDER-GATE-OS`
 
 ---
 
@@ -71,11 +71,12 @@ Both are strictly greater-than. A contract at exactly £5,000,000 triggers neith
 ## Order of work
 
 1. This file
-2. `docs/07_CORRECTIONS_REGISTER.md` — what was wrong and why it mattered
-3. `docs/09_MIGRATION_FROM_LEGACY.md` — you do not need the old folder
-4. `docs/08_LOCKED_DECISIONS.md` — resolve the open items
-5. `docs/INSTALL.md` — confirm three zero exit codes
-6. `docs/11_MILESTONE_PROMPTS.md` — start M01
+2. `docs/STATUS_AND_NEXT.md` — what is already done vs open (read before any agent prompt)
+3. `TGOS_Product_UX_UI_Accessibility_Build_Spec.md` — authoritative UX/UI/a11y build spec
+4. `docs/07_CORRECTIONS_REGISTER.md` — regulatory defects (historical; locked by tests)
+5. `docs/08_LOCKED_DECISIONS.md` — resolve remaining OPEN items
+6. `docs/INSTALL.md` — confirm three zero exit codes when touching tools
+7. `docs/11_MILESTONE_PROMPTS.md` — **M04 onward only** (M01–M03 build prompts retired)
 
 ## Contents
 

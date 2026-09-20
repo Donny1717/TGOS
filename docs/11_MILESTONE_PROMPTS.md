@@ -49,65 +49,15 @@ HARD CONSTRAINTS — violating any of these fails the milestone:
 
 ---
 
-## M01 — Organisations, roles, Company Passport, RLS
+## M01–M03 — RETIRED AS BUILD PROMPTS (2026-09-13)
 
-```
-Build the multi-tenant foundation.
+**Do not execute the old “Build the multi-tenant foundation / tender workspace / requirements matrix” prompts.** Those scopes are already present in migrations, server actions, and `apps/web` UI.
 
-SCOPE
-- organisations, organisation_members, roles (owner/admin/member/viewer)
-- Company Passport: legal identity, financial, policy, certification,
-  contact data. Schema plus CRUD UI.
-- RLS on every tenant-owned table
-- Dashboard shell
-- updated_at trigger, membership helper functions
+- Status detail: `docs/STATUS_AND_NEXT.md`
+- Roadmap overlay: `docs/04_MILESTONE_ROADMAP.md`
+- If work is needed on M01–M03, only **verify gates** (`supabase/tests/*.sql`) and **UX alignment to Spec v1.0 Priority 1** — never greenfield recreate.
 
-GATE — must be demonstrated by an automated test
-Two organisations cannot read each other's data. Write the test so it fails
-if RLS is dropped, not only if the API layer is bypassed.
-
-DELIVER
-supabase/migrations/<timestamp>_organisations_and_passport.sql
-apps/web/app/(dashboard)/...
-tests/integration/rls-isolation.test.ts
-Paste the passing test output.
-```
-
-## M02 — Tender workspace and Source Document Room
-
-```
-SCOPE
-- tenders: metadata, lots, owners, deadlines, lifecycle states
-- source documents: immutable originals, versioning, SHA-256 hash recording
-- private storage buckets, short-lived signed URLs
-- task model
-
-GATE
-Original files are provably immutable and every version is retrievable.
-Test: upload, replace, confirm v1 bytes and hash are unchanged.
-
-NOTE
-Deadlines are Europe/London. Store UTC, render Europe/London. A tender
-deadline rendered in the wrong zone loses a bid.
-```
-
-## M03 — Requirements matrix and Evidence Locker
-
-```
-SCOPE
-- requirements: text, classification, owner, due date, source citation
-  (document, page, section)
-- Evidence Locker: items, types, expiry dates, version control
-- evidence-to-requirement links
-
-GATES
-1. Every requirement carries a source reference.
-2. Expiry produces a warning BEFORE the relevant date, not after.
-3. Evidence validity is measured to CONTRACT START, not the submission
-   deadline. See tools/tokens.mjs checkF9.
-
-Import checkF9 from the tokens module rather than reimplementing it.
-```
+---
 
 ## M04 — Answer Studio
 

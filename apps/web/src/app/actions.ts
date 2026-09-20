@@ -87,6 +87,37 @@ const evidenceLinkSchema = z.object({
   requirementId: z.string().uuid(),
 });
 
+const issueSeveritySchema = z.enum(["critical", "high", "medium", "low"]);
+const issueStateSchema = z.enum(["open", "in_progress", "awaiting_review", "resolved", "accepted_risk"]);
+const gateDecisionSchema = z.enum(["go", "conditional_go", "no_go", "in_progress"]);
+
+const issueSchema = z.object({
+  citationText: z.string().trim().max(2000),
+  dueOn: z.string().trim(),
+  ownerName: z.string().trim().max(160),
+  recommendedAction: z.string().trim().max(5000),
+  requirementId: z.string().uuid().or(z.literal("")),
+  severity: issueSeveritySchema,
+  tenderId: z.string().uuid(),
+  title: z.string().trim().min(2).max(200),
+  whyItMatters: z.string().trim().min(2).max(5000),
+});
+
+const issueStateUpdateSchema = z.object({
+  acceptedRiskApproverName: z.string().trim().max(160),
+  acceptedRiskReason: z.string().trim().max(5000),
+  issueId: z.string().uuid(),
+  state: issueStateSchema,
+});
+
+const gateApprovalSchema = z.object({
+  acceptedRiskIssueIds: z.array(z.string().uuid()).default([]),
+  approverName: z.string().trim().min(2).max(160),
+  comment: z.string().trim().max(5000),
+  decision: gateDecisionSchema,
+  systemDecision: z.string().trim().max(40),
+});
+
 const maxSourceDocumentBytes = 25 * 1024 * 1024;
 
 function readField(formData: FormData, field: string) {
@@ -161,10 +192,16 @@ function toLondonUtc(value: string) {
   return new Date(requestedUtc - (displayedUtc - requestedUtc)).toISOString();
 }
 
-async function writeAuditEvent(organisationId: string, actorId: string, eventType: string) {
+async function writeAuditEvent(
+  organisationId: string,
+  actorId: string,
+  eventType: string,
+  eventData: Record<string, unknown> = {},
+) {
   const admin = createSupabaseAdminClient();
   const { error } = await admin.from("audit_events").insert({
     actor_id: actorId,
+    event_data: eventData,
     event_type: eventType,
     organisation_id: organisationId,
   });
@@ -620,3 +657,143 @@ export async function deleteCompanyPassport(organisationId: string) {
   revalidatePath(`/dashboard/${organisationId}`);
   revalidatePath(`/dashboard/${organisationId}/passport`);
 }
+
+export async function createIssue(organisationId: string, formData: FormData) {
+  const requirementRaw = readField(formData, "requirementId");
+  const input = issueSchema.parse({
+    citationText: readField(formData, "citationText"),
+    dueOn: readField(formData, "dueOn"),
+    ownerName: readField(formData, "ownerName"),
+    recommendedAction: readField(formData, "recommendedAction"),
+    requirementId: requirementRaw,
+    severity: readField(formData, "severity"),
+    tenderId: readField(formData, "tenderId"),
+    title: readField(formData, "title"),
+    whyItMatters: readField(formData, "whyItMatters"),
+  });
+  const { supabase, user } = await requireOrganisationMembership(organisationId, ["owner", "admin", "member"]);
+  const { data, error } = await supabase
+    .from("issues")
+    .insert({
+      citation_text: input.citationText,
+      created_by: user.id,
+      due_on: input.dueOn || null,
+      organisation_id: organisationId,
+      owner_name: input.ownerName,
+      recommended_action: input.recommendedAction,
+      requirement_id: input.requirementId || null,
+      severity: input.severity,
+      tender_id: input.tenderId,
+      title: input.title,
+      why_it_matters: input.whyItMatters,
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) throw new Error("The issue could not be created.");
+
+  await writeAuditEvent(organisationId, user.id, "issue_created", {
+    issueId: data.id,
+    severity: input.severity,
+    tenderId: input.tenderId,
+  });
+  revalidatePath(`/dashboard/${organisationId}/issues`);
+  revalidatePath(`/dashboard/${organisationId}/tenders/${input.tenderId}/issues`);
+  revalidatePath(`/dashboard/${organisationId}/tenders/${input.tenderId}/final-gate`);
+  revalidatePath(`/dashboard/${organisationId}/tenders/${input.tenderId}/report`);
+}
+
+export async function updateIssueState(organisationId: string, tenderId: string, formData: FormData) {
+  const input = issueStateUpdateSchema.parse({
+    acceptedRiskApproverName: readField(formData, "acceptedRiskApproverName"),
+    acceptedRiskReason: readField(formData, "acceptedRiskReason"),
+    issueId: readField(formData, "issueId"),
+    state: readField(formData, "state"),
+  });
+
+  if (input.state === "accepted_risk") {
+    if (input.acceptedRiskApproverName.length < 2 || input.acceptedRiskReason.length < 2) {
+      throw new Error("Accepted risk requires a named approver and a reason.");
+    }
+  }
+
+  const { supabase, user } = await requireOrganisationMembership(organisationId, ["owner", "admin", "member"]);
+  const patch =
+    input.state === "accepted_risk"
+      ? {
+          accepted_risk_approver_name: input.acceptedRiskApproverName,
+          accepted_risk_at: new Date().toISOString(),
+          accepted_risk_reason: input.acceptedRiskReason,
+          state: input.state,
+        }
+      : {
+          accepted_risk_approver_name: null,
+          accepted_risk_at: null,
+          accepted_risk_reason: null,
+          state: input.state,
+        };
+
+  const { error } = await supabase
+    .from("issues")
+    .update(patch)
+    .eq("id", input.issueId)
+    .eq("organisation_id", organisationId)
+    .eq("tender_id", tenderId);
+
+  if (error) throw new Error("The issue state could not be updated.");
+
+  await writeAuditEvent(
+    organisationId,
+    user.id,
+    input.state === "accepted_risk" ? "issue_accepted_risk" : `issue_state_changed_${input.state}`,
+    {
+      issueId: input.issueId,
+      state: input.state,
+      tenderId,
+    },
+  );
+  revalidatePath(`/dashboard/${organisationId}/issues`);
+  revalidatePath(`/dashboard/${organisationId}/tenders/${tenderId}/issues`);
+  revalidatePath(`/dashboard/${organisationId}/tenders/${tenderId}/final-gate`);
+  revalidatePath(`/dashboard/${organisationId}/tenders/${tenderId}/report`);
+}
+
+export async function recordGateApproval(tenderId: string, organisationId: string, formData: FormData) {
+  const acceptedRaw = formData.getAll("acceptedRiskIssueIds").map((value) => String(value)).filter(Boolean);
+  const input = gateApprovalSchema.parse({
+    acceptedRiskIssueIds: acceptedRaw,
+    approverName: readField(formData, "approverName"),
+    comment: readField(formData, "comment"),
+    decision: readField(formData, "decision"),
+    systemDecision: readField(formData, "systemDecision"),
+  });
+  const { supabase, user } = await requireOrganisationMembership(organisationId, ["owner", "admin", "member"]);
+  const { data, error } = await supabase
+    .from("tender_gate_approvals")
+    .insert({
+      accepted_risk_issue_ids: input.acceptedRiskIssueIds,
+      approver_name: input.approverName,
+      approver_user_id: user.id,
+      comment: input.comment,
+      decision: input.decision,
+      organisation_id: organisationId,
+      system_decision: input.systemDecision || null,
+      tender_id: tenderId,
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) throw new Error("The gate approval could not be recorded.");
+
+  await writeAuditEvent(organisationId, user.id, "gate_approval_recorded", {
+    approvalId: data.id,
+    decision: input.decision,
+    systemDecision: input.systemDecision || null,
+    tenderId,
+  });
+  revalidatePath(`/dashboard/${organisationId}/tenders/${tenderId}`);
+  revalidatePath(`/dashboard/${organisationId}/tenders/${tenderId}/final-gate`);
+  revalidatePath(`/dashboard/${organisationId}/tenders/${tenderId}/report`);
+  revalidatePath(`/dashboard/${organisationId}/reports`);
+}
+
