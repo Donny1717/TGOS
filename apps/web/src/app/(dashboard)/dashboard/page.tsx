@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
-import { isLocalAuthBypassEnabled } from "@/lib/dev-auth";
+import { DEMO_ORG_ID, isLocalAuthBypassEnabled } from "@/lib/dev-auth";
 
 export default async function DashboardPage() {
   if (isLocalAuthBypassEnabled()) {
-    redirect("/dashboard/demo");
+    redirect(`/dashboard/${DEMO_ORG_ID}`);
   }
 
   const { supabase, user } = await requireUser();

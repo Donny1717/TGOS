@@ -14,6 +14,7 @@ function signInRedirect(request: NextRequest) {
 }
 
 export async function proxy(request: NextRequest) {
+  // Local product work: never force sign-in.
   if (isLocalAuthBypassEnabled(request.nextUrl.hostname)) {
     return NextResponse.next({ request });
   }
