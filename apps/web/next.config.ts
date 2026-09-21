@@ -8,6 +8,9 @@ loadEnvironment({
   quiet: true,
 });
 
-const nextConfig: NextConfig = {};
+const nextConfig: NextConfig = {
+  transpilePackages: ["@tgos/rules-engine"],
+  serverExternalPackages: [],
+};
 
 export default nextConfig;

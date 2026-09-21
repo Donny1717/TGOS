@@ -1,6 +1,6 @@
 # TGOS status and next work
 
-**Updated:** 2026-09-21 (Phase 0 setup)  
+**Updated:** 2026-09-21 (Phase 1 rules wire-up)  
 **Purpose:** Stop re-running completed instructions. Agents must read this before `docs/11_MILESTONE_PROMPTS.md`.
 
 ## Product scope (locked 2026-09-21)
@@ -12,74 +12,51 @@
 
 | Item | Evidence |
 |------|----------|
-| Cross-platform setup | `SETUP.md` (clone → npm install → verify → dev) |
-| README points at setup | `README.md` |
-| Env template clarified | `.env.example` |
-| Root scripts | `npm run verify`, `setup:check`, engines `node >=22` |
-| CI | `.github/workflows/node.js.yml` runs `npm run verify` on Node 22 |
+| Cross-platform setup | `SETUP.md` |
+| `npm run verify` | validate + rules + tokens |
+| CI Node 22 + verify | `.github/workflows/node.js.yml` |
 
-**Remaining for humans on a new machine:** clone, `npm install`, copy `.env`, run `npm run verify` and `npm run dev`. Optional Supabase/Docker only when hitting RLS gates.
+## Phase 1 — Rules in product (done 2026-09-21, first slice)
+
+| Item | Evidence |
+|------|----------|
+| Rules package | `packages/rules-engine` (dataset from `tools/regulatory-dataset.json`) |
+| Web helper | `apps/web/src/lib/compliance.ts` — hardBlocks, supplier obligations, buyer intelligence, UNKNOWN |
+| Final Gate | PA23 panel; hard fails force No-Go; demo uses sample inputs |
+| Migration | `supabase/migrations/20260921120000_tender_compliance_inputs.sql` |
+
+**Still open in Phase 1 / Sprint 4:** UI to edit tender compliance inputs; auto-create issues from supplier APPLIES; grammar + word count; real auth default; RLS re-run.
 
 ## Do not rebuild (already in the repo)
 
 | Item | Evidence | Notes |
 |------|----------|--------|
-| M00 regulatory tools | `tools/validate.mjs`, `rules.mjs`, `tokens.mjs` + tests | Re-confirmed 2026-09-13: validate/rules/tokens exit 0 |
-| M00 corrections locked by tests | `[AUG-PACK-BUG]` fixtures in `tools/rules.test.mjs` | Do not re-open as build tasks |
-| M01 schema + UI (base) | migrations `organisations_and_passport`, org/passport/onboarding UI, server actions | Gate: `supabase/tests/rls-isolation.sql` exists — re-run to confirm, do not recreate tables/UI from scratch |
-| M02 schema + UI (base) | tender/lots/tasks/source documents + upload/version/hash + signed URLs | Gate SQL: `supabase/tests/tender-source-documents.sql` — verify, do not rebuild |
-| M03 schema + UI (base) | requirements (manual + citation fields), evidence items, link/unlink, expiry helper | Gate SQL: `supabase/tests/requirements-evidence.sql` — verify, do not rebuild |
-| Marketing landing §8.1 (first pass) | `apps/web/src/components/tgos-landing.tsx` used by `/` and `/tgos` | Real Next.js page — **no HTML mockups**. Tokens in `globals.css` |
+| M00 regulatory tools | `tools/validate.mjs`, `rules.mjs`, `tokens.mjs` + tests | exit 0 |
+| M00 corrections locked by tests | `[AUG-PACK-BUG]` fixtures | Do not re-open |
+| M01–M03 schema + UI base | migrations + pages | verify gates, do not recreate |
+| Landing | `tgos-landing.tsx` | check-oriented copy |
 
-## Still open — TGOS only
+## Sprint backlog (remaining)
 
-See sprint backlog below. Do not expand scope to other products.
-
-## Sprint backlog — private beta / GTM path (TGOS)
-
-Ordered for production readiness. Do not skip gate/security for polish.
-
-### Sprint 1 — Shell + clarity (done)
-- [x] App shell §5: Overview, Tenders, Requirements, Evidence, Issues, Reports, Settings (+ Help/accessibility)
-- [x] Compact top bar (tender context / deadline when relevant, notifications, user menu) — no second full nav
-- [x] Dashboard §8.4: priority actions, KPI cards (≤4), active tenders, evidence alerts — **no decorative charts**
-- [x] Design tokens applied across dashboard shell
-
-### Sprint 2 — Tender command centre
-- [x] Tender Overview §8.7 (status, countdown, top 3 actions, Run final gate CTA)
-- [x] Requirement Register §8.9 + accessible detail drawer §8.10
-- [x] Evidence view §8.11 (filters: missing / expired / expiring / unapproved)
-
-### Sprint 2 note
-- [x] Final Gate page shell + decision from live requirement/evidence links (approval persistence still Sprint 3)
-
-### Sprint 3 — The product gate (done)
-- [x] Issues & Actions §8.12 (severity, owner, due, citation, states incl. accepted risk)
-- [x] Final Submission Gate §8.13 (Go / Conditional Go / No-Go / In progress + mandatory AI disclaimer)
-- [x] Human approval record (approver, decision, datetime, comment, accepted-risk refs)
-- [x] Tender Readiness Report §8.14 (HTML first)
-
-Apply migration before using live data: supabase/migrations/20260913120000_issues_and_gate_approvals.sql
-
-### Sprint 4 — Enforce truth in the product (next)
-- [ ] Wire tools/rules into Final Gate / readiness — UI must block or clearly alert on hard fails
+### Sprint 4 — Enforce truth (in progress)
+- [x] Wire tools/rules into Final Gate (package + panel + hardBlocks)
+- [ ] Form to capture tender compliance inputs (buyer type, values, commencement date)
 - [ ] Re-run RLS / isolation gates; confirm no client secrets
 - [ ] Real auth path as default for beta (local bypass only for explicit local preview)
-- [ ] Basic a11y pass: skip link, focus, keyboard drawer, status text labels; accessibility page with honest wording
-- [ ] Grammar check + word count + alerts (product scope)
+- [ ] Basic a11y pass
+- [ ] Grammar check + word count + alerts
 
-### Sprint 5 — GTM hygiene (TGOS)
-- [ ] Customer-facing copy matches shipped behaviour (no overclaim; check-only product)
-- [ ] Onboarding 3-step §8.3 works end-to-end on real org data
-- [ ] Private beta invite flow ready (manual OK)
+### Sprint 5 — GTM hygiene
+- [ ] Customer-facing copy matches shipped behaviour
+- [ ] Onboarding end-to-end on real org data
+- [ ] Private beta invite flow
 
-### Later (after private beta) — still TGOS
-- Billing/entitlements only if needed for beta; hosting decision (M10)
-- Do **not** prioritise document generation / Master Suite as core product
+### Later
+- Hosting decision; billing only if needed for beta
+- Do **not** prioritise document generation as core product
 
 ## Authoritative specs
 
 - Setup: `SETUP.md`
-- Product/UX/A11y: TGOS_Product_UX_UI_Accessibility_Build_Spec.md (repo root)
-- Short index: docs/TGOS_PRODUCT_UX_A11Y_SPEC_v1.md
-- Standing coding constraints: docs/11_MILESTONE_PROMPTS.md section 0 (keep)
+- Product/UX/A11y: `TGOS_Product_UX_UI_Accessibility_Build_Spec.md`
+- Standing constraints: `docs/11_MILESTONE_PROMPTS.md` section 0
