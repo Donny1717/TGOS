@@ -1,10 +1,10 @@
-import { requestSignInLink } from "@/app/actions";
+import { signInWithPassword, signUpWithPassword } from "@/app/actions";
 import { isLocalAuthBypassEnabled } from "@/lib/dev-auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 type SignInPageProps = {
-  searchParams: Promise<{ error?: string; sent?: string }>;
+  searchParams: Promise<{ error?: string; mode?: string }>;
 };
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
@@ -12,31 +12,31 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     redirect("/dashboard");
   }
 
-  const { error, sent } = await searchParams;
+  const { error, mode } = await searchParams;
+  const isSignUp = mode === "signup";
 
   return (
     <main className="mx-auto flex min-h-screen max-w-xl items-center px-6 py-12">
       <section className="w-full rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
         <p className="text-sm font-semibold text-blue-700">TGOS — Tender Gate OS</p>
-        <h1 className="mt-5 text-3xl font-bold tracking-tight">Sign in</h1>
+        <h1 className="mt-5 text-3xl font-bold tracking-tight">{isSignUp ? "Create account" : "Sign in"}</h1>
         <p className="mt-2 text-sm text-slate-600">
-          Login is optional during product development. For local UI work set{" "}
-          <code className="rounded bg-slate-100 px-1">DISABLE_AUTH=true</code> in root{" "}
-          <code className="rounded bg-slate-100 px-1">.env</code> and open{" "}
-          <Link href="/dashboard" className="font-semibold text-blue-700">
-            /dashboard
-          </Link>
-          . Google sign-in will be added later.
+          Real organisation data on your Supabase project. Google sign-in can be added later.
         </p>
-        {sent && (
-          <p className="mt-4 rounded-md bg-emerald-50 p-3 text-sm text-emerald-800">Check your email for the sign-in link.</p>
+
+        {error === "credentials" && (
+          <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800">Email or password is incorrect.</p>
         )}
-        {error === "callback" && (
+        {error === "signup" && (
           <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800">
-            That sign-in link is invalid or has expired. Request a new link and try again.
+            Could not create the account. Use a new email, password at least 6 characters, and confirm email is disabled in Supabase Auth for local testing.
           </p>
         )}
-        <form action={requestSignInLink} className="mt-8 space-y-5">
+        {error === "callback" && (
+          <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800">Sign-in link failed. Use email and password below instead.</p>
+        )}
+
+        <form action={isSignUp ? signUpWithPassword : signInWithPassword} className="mt-8 space-y-5">
           <label className="block text-sm font-medium">
             Work email
             <input
@@ -47,10 +47,39 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
               className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"
             />
           </label>
+          <label className="block text-sm font-medium">
+            Password
+            <input
+              name="password"
+              type="password"
+              autoComplete={isSignUp ? "new-password" : "current-password"}
+              required
+              minLength={6}
+              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"
+            />
+          </label>
           <button className="w-full rounded-md bg-blue-700 px-4 py-2 font-semibold text-white hover:bg-blue-800">
-            Send sign-in link
+            {isSignUp ? "Create account" : "Sign in"}
           </button>
         </form>
+
+        <p className="mt-6 text-center text-sm text-slate-600">
+          {isSignUp ? (
+            <>
+              Already have an account?{" "}
+              <Link href="/sign-in" className="font-semibold text-blue-700">
+                Sign in
+              </Link>
+            </>
+          ) : (
+            <>
+              New here?{" "}
+              <Link href="/sign-in?mode=signup" className="font-semibold text-blue-700">
+                Create account
+              </Link>
+            </>
+          )}
+        </p>
       </section>
     </main>
   );
