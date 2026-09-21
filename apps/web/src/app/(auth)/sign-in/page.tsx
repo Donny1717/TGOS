@@ -1,4 +1,4 @@
-import { signInWithPassword, signUpWithPassword } from "@/app/actions";
+import { signInWithPassword, signUpWithPassword } from "@/app/actions-auth";
 import { isLocalAuthBypassEnabled } from "@/lib/dev-auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -29,11 +29,14 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
         )}
         {error === "signup" && (
           <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800">
-            Could not create the account. Use a new email, password at least 6 characters, and confirm email is disabled in Supabase Auth for local testing.
+            Could not create the account. Use a new email, password at least 6 characters, and turn off Confirm email in
+            Supabase Auth for local testing.
           </p>
         )}
         {error === "callback" && (
-          <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800">Sign-in link failed. Use email and password below instead.</p>
+          <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800">
+            Sign-in link failed. Use email and password below instead.
+          </p>
         )}
 
         <form action={isSignUp ? signUpWithPassword : signInWithPassword} className="mt-8 space-y-5">
