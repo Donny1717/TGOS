@@ -1,0 +1,11 @@
+{
+  "name": "@tgos/rules-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "description": "PA23-oriented compliance rules. Thresholds only from tools/regulatory-dataset.json."
+}
