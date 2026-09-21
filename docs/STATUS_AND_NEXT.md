@@ -1,7 +1,24 @@
 # TGOS status and next work
 
-**Updated:** 2026-09-13 (agent session)  
+**Updated:** 2026-09-21 (Phase 0 setup)  
 **Purpose:** Stop re-running completed instructions. Agents must read this before `docs/11_MILESTONE_PROMPTS.md`.
+
+## Product scope (locked 2026-09-21)
+
+- **Does:** document checking — missing evidence/requirements, compliance aligned to **Procurement Act 2023**, roadmap grammar + word count + alerts. High accuracy; stay up to date with the Act and related instruments.
+- **Does not:** create or generate submission documents (no Master Suite / answer generation as core duty).
+
+## Phase 0 — Run on any machine (done 2026-09-21)
+
+| Item | Evidence |
+|------|----------|
+| Cross-platform setup | `SETUP.md` (clone → npm install → verify → dev) |
+| README points at setup | `README.md` |
+| Env template clarified | `.env.example` |
+| Root scripts | `npm run verify`, `setup:check`, engines `node >=22` |
+| CI | `.github/workflows/node.js.yml` runs `npm run verify` on Node 22 |
+
+**Remaining for humans on a new machine:** clone, `npm install`, copy `.env`, run `npm run verify` and `npm run dev`. Optional Supabase/Docker only when hitting RLS gates.
 
 ## Do not rebuild (already in the repo)
 
@@ -44,22 +61,25 @@ Ordered for production readiness. Do not skip gate/security for polish.
 
 Apply migration before using live data: supabase/migrations/20260913120000_issues_and_gate_approvals.sql
 
-### Sprint 4 — Enforce truth in the product
-- [ ] Wire 	ools/rules (+ export gate semantics) into Final Gate / readiness — UI must block on hard fails
+### Sprint 4 — Enforce truth in the product (next)
+- [ ] Wire tools/rules into Final Gate / readiness — UI must block or clearly alert on hard fails
 - [ ] Re-run RLS / isolation gates; confirm no client secrets
 - [ ] Real auth path as default for beta (local bypass only for explicit local preview)
 - [ ] Basic a11y pass: skip link, focus, keyboard drawer, status text labels; accessibility page with honest wording
+- [ ] Grammar check + word count + alerts (product scope)
 
 ### Sprint 5 — GTM hygiene (TGOS)
-- [ ] Customer-facing copy matches shipped behaviour (no overclaim)
+- [ ] Customer-facing copy matches shipped behaviour (no overclaim; check-only product)
 - [ ] Onboarding 3-step §8.3 works end-to-end on real org data
 - [ ] Private beta invite flow ready (manual OK)
 
 ### Later (after private beta) — still TGOS
-- M04 Answer Studio, M06 Master Suite, M08 AI extraction, M09 Stripe, M10 hosting decision
+- Billing/entitlements only if needed for beta; hosting decision (M10)
+- Do **not** prioritise document generation / Master Suite as core product
 
 ## Authoritative specs
 
+- Setup: `SETUP.md`
 - Product/UX/A11y: TGOS_Product_UX_UI_Accessibility_Build_Spec.md (repo root)
 - Short index: docs/TGOS_PRODUCT_UX_A11Y_SPEC_v1.md
 - Standing coding constraints: docs/11_MILESTONE_PROMPTS.md section 0 (keep)
