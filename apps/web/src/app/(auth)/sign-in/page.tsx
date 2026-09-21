@@ -4,7 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 type SignInPageProps = {
-  searchParams: Promise<{ error?: string; mode?: string }>;
+  searchParams: Promise<{ error?: string; mode?: string; detail?: string }>;
 };
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
@@ -12,8 +12,9 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     redirect("/dashboard");
   }
 
-  const { error, mode } = await searchParams;
+  const { error, mode, detail } = await searchParams;
   const isSignUp = mode === "signup";
+  const detailText = detail ? decodeURIComponent(detail) : null;
 
   return (
     <main className="mx-auto flex min-h-screen max-w-xl items-center px-6 py-12">
@@ -21,21 +22,18 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
         <p className="text-sm font-semibold text-blue-700">TGOS — Tender Gate OS</p>
         <h1 className="mt-5 text-3xl font-bold tracking-tight">{isSignUp ? "Create account" : "Sign in"}</h1>
         <p className="mt-2 text-sm text-slate-600">
-          Real organisation data on your Supabase project. Google sign-in can be added later.
+          Real data on your Supabase project. Set <code className="rounded bg-slate-100 px-1">DISABLE_AUTH=false</code> in
+          .env and restart the app.
         </p>
 
-        {error === "credentials" && (
-          <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800">Email or password is incorrect.</p>
-        )}
-        {error === "signup" && (
-          <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800">
-            Could not create the account. Use a new email, password at least 6 characters, and turn off Confirm email in
-            Supabase Auth for local testing.
-          </p>
-        )}
-        {error === "callback" && (
-          <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800">
-            Sign-in link failed. Use email and password below instead.
+        {(error || detailText) && (
+          <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800" role="alert">
+            {detailText ??
+              (error === "credentials"
+                ? "Email or password is incorrect."
+                : error === "signup"
+                  ? "Could not create the account."
+                  : "Sign-in failed.")}
           </p>
         )}
 
@@ -51,7 +49,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
             />
           </label>
           <label className="block text-sm font-medium">
-            Password
+            Password (at least 6 characters)
             <input
               name="password"
               type="password"
@@ -69,7 +67,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
         <p className="mt-6 text-center text-sm text-slate-600">
           {isSignUp ? (
             <>
-              Already have an account?{" "}
+              Already registered?{" "}
               <Link href="/sign-in" className="font-semibold text-blue-700">
                 Sign in
               </Link>
