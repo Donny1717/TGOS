@@ -1,4 +1,3 @@
-import { signInWithPassword, signUpWithPassword } from "@/app/actions-auth";
 import { isLocalAuthBypassEnabled } from "@/lib/dev-auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -22,8 +21,9 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
         <p className="text-sm font-semibold text-blue-700">TGOS — Tender Gate OS</p>
         <h1 className="mt-5 text-3xl font-bold tracking-tight">{isSignUp ? "Create account" : "Sign in"}</h1>
         <p className="mt-2 text-sm text-slate-600">
-          Real data on your Supabase project. Set <code className="rounded bg-slate-100 px-1">DISABLE_AUTH=false</code> in
-          .env and restart the app.
+          Real organisation workspace. Requires{" "}
+          <code className="rounded bg-slate-100 px-1">DISABLE_AUTH=false</code> and a valid{" "}
+          <code className="rounded bg-slate-100 px-1">SUPABASE_SERVICE_ROLE_KEY</code> for sign-up.
         </p>
 
         {(error || detailText) && (
@@ -37,7 +37,9 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
           </p>
         )}
 
-        <form action={isSignUp ? signUpWithPassword : signInWithPassword} className="mt-8 space-y-5">
+        {/* Route Handler sets session cookies on the redirect response (more reliable than Server Actions). */}
+        <form action="/auth/password" method="post" className="mt-8 space-y-5">
+          <input type="hidden" name="mode" value={isSignUp ? "signup" : "signin"} />
           <label className="block text-sm font-medium">
             Work email
             <input
@@ -59,7 +61,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
               className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2"
             />
           </label>
-          <button className="w-full rounded-md bg-blue-700 px-4 py-2 font-semibold text-white hover:bg-blue-800">
+          <button type="submit" className="w-full rounded-md bg-blue-700 px-4 py-2 font-semibold text-white hover:bg-blue-800">
             {isSignUp ? "Create account" : "Sign in"}
           </button>
         </form>
