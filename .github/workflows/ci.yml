@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci || npm install
+          else
+            npm install
+          fi
+
+      - name: Regulatory verify (validate + rules + tokens)
+        run: npm run verify
+
+      - name: Build web app
+        run: npm run build
+        env:
+          # Build must not require real secrets; pages that need auth stay dynamic.
+          DISABLE_AUTH: "false"
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: public-anon-placeholder
+          SUPABASE_URL: https://example.supabase.co
+          SUPABASE_ANON_KEY: public-anon-placeholder
+          SUPABASE_SERVICE_ROLE_KEY: service-role-placeholder
+          NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
