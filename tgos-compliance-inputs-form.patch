@@ -1,0 +1,288 @@
+diff --git a/apps/web/src/app/(dashboard)/dashboard/[organisationId]/tenders/[tenderId]/final-gate/page.tsx b/apps/web/src/app/(dashboard)/dashboard/[organisationId]/tenders/[tenderId]/final-gate/page.tsx
+index 6c59f21..ee58947 100644
+--- a/apps/web/src/app/(dashboard)/dashboard/[organisationId]/tenders/[tenderId]/final-gate/page.tsx
++++ b/apps/web/src/app/(dashboard)/dashboard/[organisationId]/tenders/[tenderId]/final-gate/page.tsx
+@@ -1,6 +1,6 @@
+ import Link from "next/link";
+ import { notFound } from "next/navigation";
+-import { recordGateApproval } from "@/app/actions";
++import { recordGateApproval, updateTenderComplianceInputs } from "@/app/actions";
+ import { TenderSubnav } from "@/components/tender-subnav";
+ import { requireOrganisationMembership } from "@/lib/auth";
+ import {
+@@ -58,6 +58,144 @@ function ComplianceRulesPanel({ summary }: { summary: ComplianceSummary }) {
+   );
+ }
+ 
++function ComplianceInputsForm({
++  organisationId,
++  tenderId,
++  tender,
++}: {
++  organisationId: string;
++  tenderId: string;
++  tender: {
++    buyer_type?: string | null;
++    annual_value_inc_vat?: number | null;
++    contract_years?: number | null;
++    total_value_inc_vat?: number | null;
++    vat_basis?: string | null;
++    procurement_commenced_on?: string | null;
++    is_health_service_procurement_england?: boolean | null;
++  };
++}) {
++  return (
++    <section className="rounded-[10px] border border-[var(--tgos-border)] bg-white p-5">
++      <h2 className="text-lg font-semibold text-[var(--tgos-navy)]">Tender compliance inputs</h2>
++      <p className="mt-2 text-sm text-[var(--tgos-muted)]">
++        Take every value from the tender notice or ITT documents — never estimate. A field left blank returns UNKNOWN in the
++        rules below rather than a guessed result.
++      </p>
++      <form
++        action={updateTenderComplianceInputs.bind(null, tenderId, organisationId)}
++        className="mt-4 grid gap-3 sm:grid-cols-2"
++      >
++        <div>
++          <label className="text-sm font-semibold" htmlFor="buyerType">
++            Buyer type
++          </label>
++          <select
++            id="buyerType"
++            name="buyerType"
++            defaultValue={tender.buyer_type ?? ""}
++            className="mt-1 min-h-11 w-full rounded-[10px] border border-[var(--tgos-border)] px-3"
++          >
++            <option value="">Unknown / not stated</option>
++            <option value="central_government">Central government</option>
++            <option value="sub_central">Sub-central (local authority etc.)</option>
++            <option value="other">Other contracting authority</option>
++          </select>
++        </div>
++        <div>
++          <label className="text-sm font-semibold" htmlFor="procurementCommencedOn">
++            Procurement commenced on
++          </label>
++          <input
++            id="procurementCommencedOn"
++            name="procurementCommencedOn"
++            type="date"
++            defaultValue={tender.procurement_commenced_on ?? ""}
++            className="mt-1 min-h-11 w-full rounded-[10px] border border-[var(--tgos-border)] px-3"
++          />
++          <p className="mt-1 text-xs text-[var(--tgos-subtle)]">Date the tender notice was published — never today&apos;s date.</p>
++        </div>
++        <div>
++          <label className="text-sm font-semibold" htmlFor="annualValueIncVat">
++            Annual value, inc. VAT (£)
++          </label>
++          <input
++            id="annualValueIncVat"
++            name="annualValueIncVat"
++            inputMode="decimal"
++            defaultValue={tender.annual_value_inc_vat ?? ""}
++            placeholder="e.g. 250000"
++            className="mt-1 min-h-11 w-full rounded-[10px] border border-[var(--tgos-border)] px-3"
++          />
++        </div>
++        <div>
++          <label className="text-sm font-semibold" htmlFor="contractYears">
++            Contract length (years)
++          </label>
++          <input
++            id="contractYears"
++            name="contractYears"
++            inputMode="decimal"
++            defaultValue={tender.contract_years ?? ""}
++            placeholder="e.g. 3"
++            className="mt-1 min-h-11 w-full rounded-[10px] border border-[var(--tgos-border)] px-3"
++          />
++        </div>
++        <div>
++          <label className="text-sm font-semibold" htmlFor="totalValueIncVat">
++            Total contract value, inc. VAT (£)
++          </label>
++          <input
++            id="totalValueIncVat"
++            name="totalValueIncVat"
++            inputMode="decimal"
++            defaultValue={tender.total_value_inc_vat ?? ""}
++            placeholder="e.g. 750000"
++            className="mt-1 min-h-11 w-full rounded-[10px] border border-[var(--tgos-border)] px-3"
++          />
++        </div>
++        <div>
++          <label className="text-sm font-semibold" htmlFor="vatBasis">
++            These figures are
++          </label>
++          <select
++            id="vatBasis"
++            name="vatBasis"
++            defaultValue={tender.vat_basis ?? ""}
++            className="mt-1 min-h-11 w-full rounded-[10px] border border-[var(--tgos-border)] px-3"
++          >
++            <option value="">Unknown / not stated</option>
++            <option value="inclusive">Inclusive of VAT</option>
++            <option value="exclusive">Exclusive of VAT</option>
++          </select>
++          <p className="mt-1 text-xs text-[var(--tgos-subtle)]">
++            A figure confirmed exclusive of VAT returns UNKNOWN rather than being silently converted.
++          </p>
++        </div>
++        <div className="sm:col-span-2">
++          <label className="flex min-h-11 items-center gap-2 text-sm font-semibold">
++            <input
++              type="checkbox"
++              name="isHealthServiceProcurementEngland"
++              value="on"
++              defaultChecked={Boolean(tender.is_health_service_procurement_england)}
++            />
++            This is an NHS / health service procurement in England
++          </label>
++        </div>
++        <div className="sm:col-span-2">
++          <button
++            type="submit"
++            className="inline-flex min-h-11 items-center rounded-[10px] bg-[var(--tgos-primary)] px-4 text-sm font-semibold text-white"
++          >
++            Save compliance inputs
++          </button>
++        </div>
++      </form>
++    </section>
++  );
++}
++
+ export default async function FinalGatePage({ params }: PageProps) {
+   const { organisationId, tenderId } = await params;
+ 
+@@ -220,6 +358,7 @@ export default async function FinalGatePage({ params }: PageProps) {
+         </div>
+       </div>
+ 
++      <ComplianceInputsForm organisationId={organisationId} tenderId={tenderId} tender={tender} />
+       <ComplianceRulesPanel summary={compliance} />
+ 
+       <section className="rounded-[10px] border border-[var(--tgos-border)] bg-white p-5">
+diff --git a/apps/web/src/app/actions.ts b/apps/web/src/app/actions.ts
+index 0c4b04e..5689b37 100644
+--- a/apps/web/src/app/actions.ts
++++ b/apps/web/src/app/actions.ts
+@@ -42,6 +42,16 @@ const tenderSchema = z.object({
+   contractStartDate: z.string().trim(),
+ });
+ 
++const tenderComplianceInputSchema = z.object({
++  buyerType: z.enum(["central_government", "sub_central", "other", ""]),
++  annualValueIncVat: z.string().trim(),
++  contractYears: z.string().trim(),
++  totalValueIncVat: z.string().trim(),
++  vatBasis: z.enum(["inclusive", "exclusive", ""]),
++  procurementCommencedOn: z.string().trim(),
++  isHealthServiceProcurementEngland: z.string().trim(),
++});
++
+ const tenderLotSchema = z.object({
+   name: z.string().trim().min(1).max(160),
+   reference: z.string().trim().max(120),
+@@ -136,6 +146,37 @@ function toPence(value: string) {
+   return Number(pounds) * 100 + Number(pence.padEnd(2, "0"));
+ }
+ 
++function toDecimalAmount(value: string) {
++  if (!value) return null;
++
++  const normalized = value.replace(/,/g, "");
++  if (!/^\d+(?:\.\d{1,2})?$/.test(normalized)) {
++    throw new Error("Values must be non-negative amounts with up to two decimal places.");
++  }
++
++  return Number(normalized);
++}
++
++function toPositiveDecimal(value: string) {
++  if (!value) return null;
++
++  const normalized = value.replace(/,/g, "");
++  if (!/^\d+(?:\.\d{1,2})?$/.test(normalized) || Number(normalized) <= 0) {
++    throw new Error("Contract years must be a positive number.");
++  }
++
++  return Number(normalized);
++}
++
++function toPlainDate(value: string) {
++  if (!value) return null;
++  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
++    throw new Error("Procurement commencement date must be a valid date.");
++  }
++
++  return value;
++}
++
+ function toNamedItems(value: string) {
+   return value
+     .split("\n")
+@@ -309,6 +350,42 @@ export async function createTender(organisationId: string, formData: FormData) {
+   redirect(`/dashboard/${organisationId}/tenders/${tender.id}`);
+ }
+ 
++export async function updateTenderComplianceInputs(tenderId: string, organisationId: string, formData: FormData) {
++  const input = tenderComplianceInputSchema.parse({
++    annualValueIncVat: readField(formData, "annualValueIncVat"),
++    buyerType: readField(formData, "buyerType"),
++    contractYears: readField(formData, "contractYears"),
++    isHealthServiceProcurementEngland: readField(formData, "isHealthServiceProcurementEngland"),
++    procurementCommencedOn: readField(formData, "procurementCommencedOn"),
++    totalValueIncVat: readField(formData, "totalValueIncVat"),
++    vatBasis: readField(formData, "vatBasis"),
++  });
++  const { supabase, user } = await requireOrganisationMembership(organisationId, ["owner", "admin", "member"]);
++
++  const { error } = await supabase
++    .from("tenders")
++    .update({
++      annual_value_inc_vat: toDecimalAmount(input.annualValueIncVat),
++      buyer_type: input.buyerType || null,
++      contract_years: toPositiveDecimal(input.contractYears),
++      is_health_service_procurement_england: input.isHealthServiceProcurementEngland === "on",
++      procurement_commenced_on: toPlainDate(input.procurementCommencedOn),
++      total_value_inc_vat: toDecimalAmount(input.totalValueIncVat),
++      vat_basis: input.vatBasis || null,
++    })
++    .eq("id", tenderId)
++    .eq("organisation_id", organisationId);
++
++  if (error) {
++    throw new Error(
++      "The compliance inputs could not be saved. Confirm values are inclusive of VAT and taken from the tender documents, not estimated.",
++    );
++  }
++
++  await writeAuditEvent(organisationId, user.id, "tender_compliance_inputs_updated");
++  revalidatePath(`/dashboard/${organisationId}/tenders/${tenderId}/final-gate`);
++}
++
+ export async function createTenderLot(tenderId: string, organisationId: string, formData: FormData) {
+   const input = tenderLotSchema.parse({
+     description: readField(formData, "description"),
+diff --git a/docs/STATUS_AND_NEXT.md b/docs/STATUS_AND_NEXT.md
+index 3bca616..5963ffb 100644
+--- a/docs/STATUS_AND_NEXT.md
++++ b/docs/STATUS_AND_NEXT.md
+@@ -1,6 +1,6 @@
+ # TGOS status and next work
+ 
+-**Updated:** 2026-09-21 (Phase 1 rules wire-up)  
++**Updated:** 2026-09-22 (compliance-inputs form)  
+ **Purpose:** Stop re-running completed instructions. Agents must read this before `docs/11_MILESTONE_PROMPTS.md`.
+ 
+ ## Product scope (locked 2026-09-21)
+@@ -40,7 +40,7 @@
+ 
+ ### Sprint 4 — Enforce truth (in progress)
+ - [x] Wire tools/rules into Final Gate (package + panel + hardBlocks)
+-- [ ] Form to capture tender compliance inputs (buyer type, values, commencement date)
++- [x] Form to capture tender compliance inputs (buyer type, values, commencement date) — `updateTenderComplianceInputs` in `apps/web/src/app/actions.ts`, form on the Final Gate page
+ - [ ] Re-run RLS / isolation gates; confirm no client secrets
+ - [ ] Real auth path as default for beta (local bypass only for explicit local preview)
+ - [ ] Basic a11y pass

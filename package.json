@@ -26,5 +26,10 @@
   },
   "devDependencies": {
     "tsx": "4.23.13"
+  },
+  "dependencies": {
+    "@supabase/server": "^1.7.0",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.116.0"
   }
 }
