@@ -212,7 +212,19 @@ export function ruleAwardOutcome(t) {
     "Cannot evaluate: satisfiesRequirements is required.",
     { missing: ["satisfiesRequirements"] });
 }
-
+/**
+ * Evaluate all TGOS compliance rules.
+ *
+ * A missing building input remains unknown. The engine must never invent
+ * height, storey, or residential-unit values for a tender.
+ *
+ * @param {*} tenderInput
+ * @param {{
+ *   heightMetres?: number | null,
+ *   storeys?: number | null,
+ *   residentialUnits?: number | null
+ * } | null} [buildingInput=null]
+ */
 export function evaluateAllRules(tenderInput, buildingInput = null) {
   return [
     ruleCarbonReductionPlan(tenderInput),
